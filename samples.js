@@ -60,7 +60,13 @@ const pendingReducer = (state = false, action) => {
 	return !!action.type.match(/_PENDING$/);
 }
 
-const store = createStore(combineReducers({values: valuesReducer, pending: pendingReducer}), applyMiddleware(promise(after => `${(after / 1000).toFixed(2)}s`), logger));
+const lastActionReducer = (state, action) => {
+	return {
+		lastActionType: action.type
+	};
+}
+
+const store = createStore(combineReducers({meta: lastActionReducer, app: combineReducers({values: valuesReducer, pending: pendingReducer})}), applyMiddleware(promise(after => `${(after / 1000).toFixed(2)}s`), logger));
 
 store.dispatch({type: 'ADD', payload: 1});
 store.dispatch({type: 'ADD', payload: 2});
